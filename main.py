@@ -1,9 +1,12 @@
+import datetime
 import os
-import secrets
 import sqlite3
 
 import flask
-from flask import Flask, g
+from flask import Flask, g, request
+
+from potyk_stats_back.activity import ActivityRepo, ActivityEntry
+from potyk_stats_back.dt_utils import parse_dt
 
 
 def create_app():
@@ -25,8 +28,36 @@ def create_app():
         if db is not None:
             db.close()
 
-    @app.route("/")
+    @app.route("/", methods=["GET", "POST"])
     def index():
-        return flask.render_template("index.html")
+        cursor = get_db().cursor()
+        repo = ActivityRepo(cursor)
+
+        if request.method == "POST":
+            form = request.form
+            activity: str = form["activity"]
+            created_str = form.get("created")
+            comment: str | None = form.get("comment")
+            secret: str = form["secret"]
+
+            if secret != os.environ["FLASK_SECRET"]:
+                raise flask.abort(403)
+
+            created = parse_dt(created_str) if created_str else datetime.datetime.now()
+
+            entry = ActivityEntry(activity, created, comment)
+            repo.insert_activity(entry)
+
+        options = [
+            [{"value": activity, "text": activity}]
+            for activity in repo.list_activity_values()
+        ]
+        activities = repo.list_activities()
+
+        return flask.render_template(
+            "index.html",
+            options=options,
+            activities=activities,
+        )
 
     return app

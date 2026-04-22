@@ -1,10 +1,99 @@
 {% extends '_base.html' %}
 
 {% block style %}
+
+    <link href="https://cdn.jsdelivr.net/npm/tom-select@2.6.0/dist/css/tom-select.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/tom-select@2.6.0/dist/js/tom-select.complete.min.js"></script>
+    <style>
+        input {
+            padding: 7px;
+            width: -webkit-fill-available;
+            border: 1px solid #d0d0d0;
+        }
+
+        div.field {
+            margin-bottom: 20px;
+        }
+
+        button {
+            padding: 7px 21px;
+            font-size: 16px;
+
+        }
+
+        table {
+            width: 100%;
+        }
+
+        td {
+            text-align: center;
+        }
+    </style>
 {% endblock %}
 
 {% block main %}
     <h1 style="text-align: center; margin-top: 40vh">potyk-stats</h1>
 
+    <form method="post">
+        <div class="field">
+            <label>
+                Activity:<br>
+                <input id="activity" name="activity" required>
+            </label>
+        </div>
+        <div class="field">
+            <label>
+                Comment:<br>
+                <input name="comment">
+            </label>
+        </div>
+        <div class="field">
+            <label>
+                Created:<br>
+                <input name="created" type="datetime-local">
+            </label>
+        </div>
+        <div class="field">
+            <label>
+                Secret:<br>
+                <input name="secret" required>
+            </label>
+        </div>
 
+        <div style="display: flex; justify-content: center">
+            <button>Submit</button>
+        </div>
+    </form>
+
+    <h2>History</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>Activity</th>
+            <th>Comment</th>
+            <th>Created</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        {% for activity in activities %}
+            <tr>
+                <td>{{ activity.activity }}</td>
+                <td>{{ activity.comment }}</td>
+                <td>{{ activity.created }}</td>
+            </tr>
+        {% endfor %}
+
+        </tbody>
+    </table>
+
+    <script>
+        let settings = {
+            create: true,
+            maxItems: 1,
+            {# {value, text}[] #}
+            options: {{ options | tojson }},
+        };
+        new TomSelect('#activity', settings);
+    </script>
 {% endblock %}
