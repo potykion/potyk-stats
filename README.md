@@ -26,6 +26,8 @@ pip install -r requirements.txt
 # fill env w FLASK_APP=main & FLASK_SECRET=...
 nano .env
 
+scp main.db leybovich-nikita@84.201.131.244:/home/leybovich-nikita/potyk-stats
+
 sudo cp ./potyk-stats.service /etc/systemd/system/potyk-stats.service
 sudo chmod 644 /etc/systemd/system/potyk-stats.service
 sudo systemctl enable --now potyk-stats.service
@@ -37,6 +39,5 @@ sudo systemctl enable --now potyk-stats.service
 ```shell
 ssh -l leybovich-nikita 84.201.131.244
 cd potyk-stats
-git pull
-sudo systemctl restart potyk-stats.service
+git pull && sudo systemctl restart potyk-stats.service
 ```
