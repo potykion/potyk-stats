@@ -1,8 +1,9 @@
 import os
+import secrets
 import sqlite3
 
 import flask
-from flask import Flask, request, g
+from flask import Flask, g
 
 
 def create_app():
@@ -26,26 +27,6 @@ def create_app():
 
     @app.route("/")
     def index():
-        cur = get_db().cursor()
-        rows = cur.execute("SELECT * FROM table").fetchall()
         return flask.render_template("index.html")
-
-    @app.route("/form", methods=["GET", "POST"])
-    def form():
-        if request.method == "GET":
-            return flask.render_template("form.html")
-        elif request.method == "POST":
-            form = request.form
-
-            cur = get_db().cursor()
-            cur.execute(
-                """insert into table (col1, col2)
-                   values (?, ?)""",
-                (form["col1"], form["col2"]),
-            )
-            cur.connection.commit()
-
-            flask.flash(f"Successfully added", "success")
-            return flask.render_template("form.html")
 
     return app

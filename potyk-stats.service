@@ -1,0 +1,17 @@
+[Unit]
+Description=Wine Wish
+After=network.target
+
+[Service]
+User=leybovich-nikita
+# e.g. $PORT = 5002
+WorkingDirectory=/home/leybovich-nikita/potyk-stats
+EnvironmentFile=/home/leybovich-nikita/potyk-stats/.env
+ExecStart=/home/leybovich-nikita/potyk-stats/.venv/bin/flask run --host=0.0.0.0 --port=5003
+Restart=always
+RestartSec=10
+StandardOutput=file:/home/leybovich-nikita/potyk-stats/logs/flask.log
+StandardError=file:/home/leybovich-nikita/potyk-stats/logs/flask.error.log
+
+[Install]
+WantedBy=multi-user.target
